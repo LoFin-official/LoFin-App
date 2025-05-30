@@ -1,6 +1,7 @@
 const WebView = require("react-native-webview").WebView;
 import { StackActions, RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -22,7 +23,7 @@ type Props = {
 };
 
 export default function WebviewContainer({ navigation, route }: Props) {
-  const targetUrl = "http://172.30.1.6:3000";
+  const targetUrl = "http://172.30.1.68:3000";
   const url = route.params?.url ?? targetUrl + "";
 
   const requestOnMessage = async (e: any): Promise<void> => {
@@ -49,16 +50,35 @@ export default function WebviewContainer({ navigation, route }: Props) {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView
-        style={{ flex: 1, backgroundColor: "white" }}
-        edges={["top", "bottom"]}
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoidingContainer}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -100}
       >
-        <WebView
-          originWhitelist={["*"]}
-          source={{ uri: url }}
-          onMessage={requestOnMessage}
-        />
-      </SafeAreaView>
+        <SafeAreaView
+          style={{ flex: 1, backgroundColor: "white" }}
+          edges={["top", "bottom"]}
+        >
+          <WebView
+            originWhitelist={["*"]}
+            source={{ uri: url }}
+            onMessage={requestOnMessage}
+          />
+        </SafeAreaView>
+      </KeyboardAvoidingView>
     </SafeAreaProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  keyboardAvoidingContainer: {
+    flex: 1,
+  },
+  safeArea: {
+    flex: 1,
+    backgroundColor: "white",
+  },
+  webview: {
+    flex: 1,
+  },
+});
